@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { cookies } from "next/headers"; 
 
 const { AIRTABLE_API_KEY, AIRTABLE_BASE_ID, AITABLE_TABLE_USERS, JWT_SECRET } = process.env;
 const AIRTABLE_API_URL = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AITABLE_TABLE_USERS}`;
@@ -10,13 +11,10 @@ export async function POST(request) {
     const { email, password } = await request.json();
 
     if (!email || !password) {
-      return NextResponse.json(
-        { error: "Email and password are required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
     }
 
-    // 🔥 Maintenant on CHERCHE l'utilisateur au lieu de créer
+    
     const res = await fetch(`${AIRTABLE_API_URL}?filterByFormula=({email}="${email}")`, {
       headers: {
         Authorization: `Bearer ${AIRTABLE_API_KEY}`,
@@ -27,37 +25,31 @@ export async function POST(request) {
     const record = data.records[0];
 
     if (!record) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     const user = record.fields;
 
-    // 🔥 Vérification du mot de passe
+    
     const isPasswordValid = await bcrypt.compare(password, user.password);
-
     if (!isPasswordValid) {
-      return NextResponse.json(
-        { error: "Invalid password" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
 
-    // 🔥 Générer un JWT
-    const token = jwt.sign(
-      { id: record.id, email: user.email },
-      JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    
+    const token = jwt.sign({ id: record.id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
 
-    return NextResponse.json({ token });
+    
+    cookies().set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/admin/projects",
+      maxAge: 60 * 60, 
+    });
+
+    return NextResponse.json({ message: "Login successful" });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

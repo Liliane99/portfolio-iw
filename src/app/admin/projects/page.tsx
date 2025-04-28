@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 import { AppSidebar } from "@/components/sidebar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,10 +11,22 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 
 export default function Admin() {
+  const router = useRouter(); 
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+
+  
+  useEffect(() => {
+    const token = Cookies.get("token"); 
+
+    if (!token) {
+      router.push("/login"); 
+      return;
+    }
+    
+  }, []);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -33,7 +47,7 @@ export default function Admin() {
 
   const handlePublishToggle = async (project: any) => {
     const { id, fields } = project;
-    const { id: _id, createdTime, ...rest } = fields; // retirer id et createdTime
+    const { id: _id, createdTime, ...rest } = fields; 
 
     try {
       await fetch(`/api/projects/${id}`, {
@@ -42,12 +56,12 @@ export default function Admin() {
         body: JSON.stringify({
           fields: {
             ...rest,
-            isPublished: !fields.isPublished, // inverser
+            isPublished: !fields.isPublished, 
           },
         }),
       });
 
-      // Rafraîchir la liste après
+      
       const res = await fetch("/api/projects");
       const updatedProjects = await res.json();
       setProjects(updatedProjects);

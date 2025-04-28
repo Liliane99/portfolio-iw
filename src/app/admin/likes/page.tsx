@@ -35,12 +35,12 @@ export default function AdminLikes() {
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
+     
       <div className="w-64 border-r bg-gray-50">
         <AppSidebar />
       </div>
 
-      {/* Contenu principal */}
+      
       <div className="flex-1 p-6 overflow-auto">
         <h1 className="text-2xl font-bold mb-6">Classement des projets par Likes</h1>
 

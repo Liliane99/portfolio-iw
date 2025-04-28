@@ -12,7 +12,7 @@ import {
   SidebarProvider
 } from "@/components/ui/sidebar"
 
-// Menu items.
+
 const items = [
   {
     title: "Gestions des projets",

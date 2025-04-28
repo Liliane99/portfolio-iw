@@ -45,7 +45,7 @@ const Nav = () => {
         </NavigationMenuList>
       </NavigationMenu>
 
-      {/* Bouton Connexion à gauche */}
+      
       <div className="flex items-center justify-start">
         <a
           href="/login"
@@ -84,7 +84,7 @@ const Nav = () => {
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
-              {/* Ajout du lien "Connexion" dans le menu mobile */}
+              
               <NavigationMenuItem>
                 <NavigationMenuLink
                   href="/login"

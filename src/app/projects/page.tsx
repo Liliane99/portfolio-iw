@@ -23,7 +23,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Heart } from "lucide-react"; // 👉 icône cœur Lucide
+import { Heart } from "lucide-react"; 
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
