@@ -14,24 +14,24 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
-  SelectGroup,
-  SelectLabel,
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { FaHeart, FaHeartBroken } from "react-icons/fa"; 
+import { Heart } from "lucide-react"; // 👉 icône cœur Lucide
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(10);
-  const [likedModules, setLikedModules] = useState<{ [key: string]: boolean }>({}); 
-
   const [search, setSearch] = useState("");
+
   const [selectedModule, setSelectedModule] = useState("");
   const [selectedDegree, setSelectedDegree] = useState("");
   const [selectedSemester, setSelectedSemester] = useState("");
@@ -47,12 +47,13 @@ export default function Projects() {
       try {
         const res = await fetch("/api/projects");
         const data = await res.json();
-        setProjects(data);
-        setFilteredProjects(data);
+        const published = data.filter((project: any) => project.fields.isPublished);
+        setProjects(published);
+        setFilteredProjects(published);
 
-        const uniqueModules = [...new Set(data.map((p: any) => p.fields.module).filter(Boolean))];
-        const uniqueDegrees = [...new Set(data.map((p: any) => p.fields.degree).filter(Boolean))];
-        const uniqueSemesters = [...new Set(data.map((p: any) => p.fields.semester).filter(Boolean))];
+        const uniqueModules = [...new Set(published.map((p: any) => p.fields.module).filter(Boolean))];
+        const uniqueDegrees = [...new Set(published.map((p: any) => p.fields.degree).filter(Boolean))];
+        const uniqueSemesters = [...new Set(published.map((p: any) => p.fields.semester).filter(Boolean))];
 
         setModules(uniqueModules);
         setDegrees(uniqueDegrees);
@@ -72,7 +73,7 @@ export default function Projects() {
 
   useEffect(() => {
     filterProjects();
-  }, [search, selectedModule, selectedDegree, selectedSemester]);
+  }, [search, selectedModule, selectedDegree, selectedSemester, projects]);
 
   const filterProjects = () => {
     let temp = [...projects];
@@ -110,35 +111,60 @@ export default function Projects() {
     setFilteredProjects(temp);
   };
 
-  // Fonction pour gérer le "like" et "dislike"
-  const toggleLike = (moduleId: string) => {
-    setLikedModules((prevState) => ({
-      ...prevState,
-      [moduleId]: !prevState[moduleId], // Inverse l'état du like
-    }));
+  const handleLike = async (projectId: string, currentLikes: number) => {
+    const newLikes = currentLikes + 1;
+
+    try {
+      const res = await fetch(`/api/projects/${projectId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fields: { likes: newLikes },
+        }),
+      });
+
+      if (res.ok) {
+        setProjects((prev) =>
+          prev.map((project: any) =>
+            project.id === projectId
+              ? { ...project, fields: { ...project.fields, likes: newLikes } }
+              : project
+          )
+        );
+        setFilteredProjects((prev) =>
+          prev.map((project: any) =>
+            project.id === projectId
+              ? { ...project, fields: { ...project.fields, likes: newLikes } }
+              : project
+          )
+        );
+      } else {
+        console.error("Erreur lors du like !");
+      }
+    } catch (error) {
+      console.error("Erreur serveur lors du like :", error);
+    }
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-50">
       <Nav />
 
       {loading ? (
         <div className="flex items-center justify-center h-[80vh]">
-          <Progress
-            value={progress}
-            className="w-[40%]" 
-            style={{ backgroundColor: "#f4f4f4" }}
-            indicatorColor="#FCA616"
-          />
+          <Progress value={progress} className="w-[40%]" />
         </div>
       ) : (
         <>
-          <div className="m-4 flex flex-wrap items-center gap-4">
+          <div className="m-6 flex flex-wrap items-center gap-4">
             <Input
               type="text"
               placeholder="Rechercher un projet"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              className="w-full md:w-[250px]"
             />
 
             <Select onValueChange={(value) => setSelectedModule(value)}>
@@ -190,45 +216,59 @@ export default function Projects() {
             </Select>
           </div>
 
-          
-          <div className="m-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="m-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredProjects.length > 0 ? (
               filteredProjects.map((project: any) => {
                 const { id, fields } = project;
-                const { name, description, image, module } = fields;
+                const { name, description, image, likes = 0 } = fields;
 
                 return (
-                  <Card key={id}>
-                    <CardHeader>
-                      <CardTitle>{name}</CardTitle>
-                      <CardDescription>{description}</CardDescription>
-                    </CardHeader>
-                    {image && (
-                      <CardContent>
-                        <div className="relative w-full h-40">
-                          <Image
-                            src={image}
-                            alt={name}
-                            fill
-                            className="object-cover rounded-md"
-                          />
-                        </div>
-                      </CardContent>
-                    )}
-                    {/* Section de like */}
-                    <CardFooter>
-                      <button
-                        onClick={() => toggleLike(module)}
-                        className="text-xl"
+                  <Card
+                    key={id}
+                    className="flex flex-col justify-between rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                  >
+                    <div className="flex-1 flex flex-col">
+                      <CardHeader>
+                        <CardTitle className="text-lg">{name}</CardTitle>
+                        <CardDescription className="text-muted-foreground">
+                          {description}
+                        </CardDescription>
+                      </CardHeader>
+
+                      {image && (
+                        <CardContent className="flex-1">
+                          <div className="relative w-full h-40">
+                            <Image
+                              src={image}
+                              alt={name}
+                              fill
+                              className="object-cover rounded-md"
+                            />
+                          </div>
+                        </CardContent>
+                      )}
+                    </div>
+
+                    <CardFooter className="flex justify-between items-center mt-auto p-4">
+                      <Button variant="outline" className="w-[70%]">
+                        Voir le projet
+                      </Button>
+
+                      <div
+                        className="flex items-center gap-1 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer"
+                        onClick={() => handleLike(id, likes)}
                       >
-                        {likedModules[module] ? <FaHeartBroken color="#FCA616" /> : <FaHeart />}
-                      </button>
+                        <Heart className="w-5 h-5 fill-current" />
+                        <span className="text-sm">{likes}</span>
+                      </div>
                     </CardFooter>
                   </Card>
                 );
               })
             ) : (
-              <p>Aucun projet trouvé.</p>
+              <div className="flex flex-col items-center justify-center w-full h-full">
+                <h2 className="text-xl font-bold text-gray-500">Aucun projet publié</h2>
+              </div>
             )}
           </div>
         </>

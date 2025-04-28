@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label"
 import Nav from "@/components/navbar"
 import { Button, buttonVariants } from "@/components/ui/button"
 
-export default function InputWithLabel() {
+export default function login() {
   return (
     <>
       <Nav />
@@ -17,7 +17,7 @@ export default function InputWithLabel() {
             <Label htmlFor="password">Mot de passe</Label>
             <Input type="password" id="password" placeholder="Mot de passe" />
           </div>
-          <Button className={buttonVariants({ variant: "default" })}>
+          <Button className={buttonVariants({ variant: "default" })} >
             Connexion
           </Button>
         </div>

@@ -51,7 +51,7 @@
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.141 0.005 285.823);
-  
+
   /* Modification de la couleur primaire */
   --primary: oklch(0.98 0.044 62.939); /* #FFD777 */
   --primary-foreground: oklch(0.141 0.005 285.823);
@@ -90,7 +90,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
-  
+
   /* Modification de la couleur primaire en mode sombre */
   --primary: oklch(0.92 0.004 286.32);
   --primary-foreground: oklch(0.21 0.006 285.885);
