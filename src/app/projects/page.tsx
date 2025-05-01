@@ -250,10 +250,9 @@ export default function Projects() {
                     </div>
 
                     <CardFooter className="flex justify-between items-center mt-auto p-4">
-                      <Button variant="outline" className="w-[70%]">
-                        Voir le projet
+                      <Button asChild variant="outline" className="w-[70%]">
+                        <a href={`/projects/${id}`}>Voir le projet</a>
                       </Button>
-
                       <div
                         className="flex items-center gap-1 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer"
                         onClick={() => handleLike(id, likes)}

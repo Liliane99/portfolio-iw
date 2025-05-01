@@ -33,3 +33,27 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     return NextResponse.json({ error: "Erreur lors de la mise à jour" }, { status: 500 });
   }
 }
+
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
+
+  try {
+    const airtableRes = await fetch(`${AIRTABLE_API_URL}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+      },
+    });
+
+    if (!airtableRes.ok) {
+      const errorData = await airtableRes.json();
+      return NextResponse.json({ error: errorData }, { status: airtableRes.status });
+    }
+
+    const data = await airtableRes.json();
+    return NextResponse.json(data, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Erreur lors de la récupération" }, { status: 500 });
+  }
+}
+

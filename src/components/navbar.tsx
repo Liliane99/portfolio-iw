@@ -1,11 +1,12 @@
 "use client"
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"
+import Cookies from "js-cookie"
 import {
   NavigationMenu,
   NavigationMenuList,
   NavigationMenuItem,
   NavigationMenuLink,
-} from "./ui/navigation-menu";
+} from "./ui/navigation-menu"
 import { Menu, X } from "lucide-react"
 
 const navigationMenuItemStyle =
@@ -15,6 +16,12 @@ const loginButtonStyle = "text-sm font-medium text-black no-underline cursor-poi
 
 const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  useEffect(() => {
+    const token = Cookies.get("token")
+    setIsAuthenticated(!!token)
+  }, [])
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -45,13 +52,12 @@ const Nav = () => {
         </NavigationMenuList>
       </NavigationMenu>
 
-      
       <div className="flex items-center justify-start">
         <a
-          href="/login"
+          href={isAuthenticated ? "/admin/projects" : "/login"}
           className={loginButtonStyle}
         >
-          Connexion
+          {isAuthenticated ? "Admin" : "Connexion"}
         </a>
       </div>
 
@@ -70,27 +76,23 @@ const Nav = () => {
           <NavigationMenu className="flex flex-col items-center space-y-4 py-4">
             <NavigationMenuList className="flex flex-col items-center space-y-4 py-4">
               <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="/"
-                  className={`${navigationMenuItemStyle}`}
-                >
+                <NavigationMenuLink href="/" className={navigationMenuItemStyle}>
                   Accueil
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavigationMenuLink className={navigationMenuItemStyle}>
+                <NavigationMenuLink href="/projects" className={navigationMenuItemStyle}>
                   Projets
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
-              
               <NavigationMenuItem>
                 <NavigationMenuLink
-                  href="/login"
-                  className={`${navigationMenuItemStyle}`}
+                  href={isAuthenticated ? "/admin/projects" : "/login"}
+                  className={navigationMenuItemStyle}
                 >
-                  Connexion
+                  {isAuthenticated ? "Admin" : "Connexion"}
                 </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
@@ -101,4 +103,4 @@ const Nav = () => {
   )
 }
 
-export default Nav;
+export default Nav

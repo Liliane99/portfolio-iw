@@ -37,15 +37,14 @@ export async function POST(request) {
     }
 
     
-    const token = jwt.sign({ id: record.id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: record.id, email: user.email }, JWT_SECRET, { expiresIn: "24h" });
 
     
     cookies().set("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/admin/projects",
-      maxAge: 60 * 60, 
+      path: "/", 
+      maxAge: 60 * 60 * 24, 
     });
+    
 
     return NextResponse.json({ message: "Login successful" });
   } catch (error) {
