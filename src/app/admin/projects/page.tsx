@@ -55,7 +55,6 @@ export default function Admin() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fields: {
-            ...rest,
             isPublished: !fields.isPublished, 
           },
         }),

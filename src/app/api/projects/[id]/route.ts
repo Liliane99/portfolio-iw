@@ -23,6 +23,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
     if (!airtableRes.ok) {
       const errorData = await airtableRes.json();
+      console.error("Erreur Airtable:", errorData);
       return NextResponse.json({ error: errorData }, { status: airtableRes.status });
     }
 
