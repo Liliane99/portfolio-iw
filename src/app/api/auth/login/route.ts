@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 const { AIRTABLE_API_KEY, AIRTABLE_BASE_ID, AITABLE_TABLE_USERS, JWT_SECRET } = process.env;
 const AIRTABLE_API_URL = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AITABLE_TABLE_USERS}`;
 
-export async function POST(request) {
+export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
 
