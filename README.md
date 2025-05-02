@@ -15,8 +15,10 @@ USER CLASSIQUE :
 ADMINISTRATEUR : (LE BOUTON DECONNEXION EST TOUT EN BAS SUR LA SIDEBAR)
 
 CONNEXION : 
+```
 EMAIL : amin.nairi@myges.fr
 Mot de passe : Amin
+```
 
 - Authentification (redirection automatique vers la page de login si le token est absent) et déconnexion.
 
