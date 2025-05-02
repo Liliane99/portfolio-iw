@@ -12,7 +12,7 @@ USER CLASSIQUE :
 - Rechercher un projet.
 - Mettre un j'aime à un projet.
 
-ADMINISTRATEUR :
+ADMINISTRATEUR : (LE BOUTON DECONNEXION EST TOUT EN BAS SUR LA SIDEBAR)
 
 - Authentification (redirection automatique vers la page de login si le token est absent) et déconnexion.
 
