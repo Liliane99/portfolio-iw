@@ -1,106 +1,95 @@
-"use client"
-import React, { useState, useEffect } from "react"
-import Cookies from "js-cookie"
+"use client";
+
+import React, { useState, useEffect } from "react";
+import Cookies from "js-cookie";
+import Link from "next/link";
 import {
   NavigationMenu,
   NavigationMenuList,
   NavigationMenuItem,
   NavigationMenuLink,
-} from "./ui/navigation-menu"
-import { Menu, X } from "lucide-react"
+} from "./ui/navigation-menu";
+import { Menu, X } from "lucide-react";
 
-const navigationMenuItemStyle =
-  "inline-flex h-9 w-max items-center justify-center rounded-md bg-[#FFD777] px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-[#FFD555] hover:text-white focus:bg-[#FFD555] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-[#FFD555] data-[state=open]:bg-[#FFD555]"
-
-const loginButtonStyle = "text-sm font-medium text-black no-underline cursor-pointer"
+const navLinkStyle =
+  "inline-flex h-9 w-max items-center justify-center rounded-md bg-[#FFD777] px-4 py-2 text-sm font-medium text-black transition hover:bg-[#FFD555] hover:text-white focus:outline-none";
 
 const Nav = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const token = Cookies.get("token")
-    setIsAuthenticated(!!token)
-  }, [])
+    const token = Cookies.get("token");
+    setIsAuthenticated(!!token);
+  }, []);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <div className="flex items-center justify-between bg-[#FFD777] px-4 py-2 text-black">
-      <div className="flex items-center space-x-4">
-        <span className="text-lg font-bold">IW LAB</span>
-      </div>
+    <nav className="bg-[#FFD777] text-black px-6 py-4 shadow-md relative z-50">
+      <div className="flex items-center justify-between max-w-7xl mx-auto">
+        
+        <Link href="/" className="text-xl font-extrabold tracking-wide">
+          IW LAB
+        </Link>
 
-      <NavigationMenu className="flex-1 mx-4">
-        <NavigationMenuList className="flex items-center justify-center space-x-4 hidden md:flex">
-          <NavigationMenuItem>
-            <NavigationMenuLink
-              href="/"
-              className={`${navigationMenuItemStyle}`}
-            >
-              Accueil
-            </NavigationMenuLink>
-          </NavigationMenuItem>
+        <NavigationMenu className="hidden md:flex">
+          <NavigationMenuList className="flex gap-6">
+            <NavigationMenuItem>
+              <Link href="/" className={navLinkStyle}>
+                Accueil
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/projects" className={navLinkStyle}>
+                Projets
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
 
-          <NavigationMenuItem>
-            <NavigationMenuLink href="/projects" className={navigationMenuItemStyle}>
-              Projets
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
+        
+        <div className="hidden md:flex">
+          <Link
+            href={isAuthenticated ? "/admin/projects" : "/login"}
+            className="text-sm font-medium text-black hover:underline"
+          >
+            {isAuthenticated ? "Admin" : "Connexion"}
+          </Link>
+        </div>
 
-      <div className="flex items-center justify-start">
-        <a
-          href={isAuthenticated ? "/admin/projects" : "/login"}
-          className={loginButtonStyle}
+        
+        <button
+          onClick={toggleMenu}
+          className="md:hidden text-black focus:outline-none"
+          aria-label="Menu mobile"
         >
-          {isAuthenticated ? "Admin" : "Connexion"}
-        </a>
-      </div>
-
-      <div className="md:hidden">
-        <button onClick={toggleMenu} className="text-black">
-          {isMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
+      
       {isMenuOpen && (
-        <div className="absolute top-0 left-0 w-full bg-[#FFD777] text-black z-10 md:hidden">
-          <NavigationMenu className="flex flex-col items-center space-y-4 py-4">
-            <NavigationMenuList className="flex flex-col items-center space-y-4 py-4">
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/" className={navigationMenuItemStyle}>
-                  Accueil
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/projects" className={navigationMenuItemStyle}>
-                  Projets
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  href={isAuthenticated ? "/admin/projects" : "/login"}
-                  className={navigationMenuItemStyle}
-                >
-                  {isAuthenticated ? "Admin" : "Connexion"}
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+        <div className="md:hidden mt-4 bg-[#FFD777] rounded-md shadow-md py-4">
+          <div className="flex flex-col items-center gap-4">
+            <Link href="/" className={navLinkStyle} onClick={() => setIsMenuOpen(false)}>
+              Accueil
+            </Link>
+            <Link href="/projects" className={navLinkStyle} onClick={() => setIsMenuOpen(false)}>
+              Projets
+            </Link>
+            <Link
+              href={isAuthenticated ? "/admin/projects" : "/login"}
+              className={navLinkStyle}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {isAuthenticated ? "Admin" : "Connexion"}
+            </Link>
+          </div>
         </div>
       )}
-    </div>
-  )
-}
+    </nav>
+  );
+};
 
-export default Nav
+export default Nav;

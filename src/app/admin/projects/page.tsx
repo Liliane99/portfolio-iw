@@ -8,7 +8,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
+import { toast } from "sonner";
 
 export default function Admin() {
   const router = useRouter(); 
@@ -17,16 +19,12 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  
   useEffect(() => {
     const token = Cookies.get("token"); 
-
     if (!token) {
       router.push("/login"); 
-      return;
     }
-    
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -36,6 +34,7 @@ export default function Admin() {
         setProjects(data);
         setFilteredProjects(data);
       } catch (error) {
+        toast.error("Erreur lors du chargement des projets.");
         console.error("Erreur lors du fetch des projets :", error);
       } finally {
         setLoading(false);
@@ -47,7 +46,6 @@ export default function Admin() {
 
   const handlePublishToggle = async (project: any) => {
     const { id, fields } = project;
-    const { id: _id, createdTime, ...rest } = fields; 
 
     try {
       await fetch(`/api/projects/${id}`, {
@@ -55,17 +53,21 @@ export default function Admin() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fields: {
-            isPublished: !fields.isPublished, 
+            isPublished: !fields.isPublished,
           },
         }),
       });
 
-      
       const res = await fetch("/api/projects");
       const updatedProjects = await res.json();
       setProjects(updatedProjects);
       setFilteredProjects(updatedProjects);
+
+      toast.success(
+        fields.isPublished ? "Projet dépublié !" : "Projet publié !"
+      );
     } catch (error) {
+      toast.error("Erreur lors de la mise à jour.");
       console.error("Erreur lors du publish :", error);
     }
   };
@@ -99,7 +101,16 @@ export default function Admin() {
         />
 
         {loading ? (
-          <div>Chargement...</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[...Array(8)].map((_, index) => (
+              <Card key={index} className="space-y-4 p-4">
+                <Skeleton className="h-5 w-1/2" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-40 w-full rounded-md" />
+                <Skeleton className="h-8 w-full" />
+              </Card>
+            ))}
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredProjects.map((project: any) => {
@@ -107,7 +118,7 @@ export default function Admin() {
               const { name, description, image, isPublished } = fields;
 
               return (
-                <Card key={id}>
+                <Card key={id} className="relative">
                   {isPublished && (
                     <Badge className="absolute top-2 right-2">Publié</Badge>
                   )}
@@ -118,12 +129,17 @@ export default function Admin() {
                   {image && (
                     <CardContent>
                       <div className="relative w-full h-40">
-                        <Image src={image} alt={name} fill className="object-cover rounded-md" />
+                        <Image
+                          src={image}
+                          alt={name}
+                          fill
+                          className="object-cover rounded-md"
+                        />
                       </div>
                     </CardContent>
                   )}
                   <CardFooter>
-                    <Button onClick={() => handlePublishToggle(project)}>
+                    <Button onClick={() => handlePublishToggle(project)} className="w-full">
                       {isPublished ? "Dépublier" : "Publier"}
                     </Button>
                   </CardFooter>
