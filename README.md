@@ -40,5 +40,19 @@ Cookies (js-cookie) pour la gestion du token d’authentification
 
 # Aperçu visuel
 
+USER CLASSIQUE : 
+<img width="1461" alt="Capture d’écran 2025-05-02 à 14 37 57" src="https://github.com/user-attachments/assets/0b7b17ea-ad69-42a0-b7ca-71b9a0bd7946" />
+<img width="1461" alt="Capture d’écran 2025-05-02 à 14 37 40" src="https://github.com/user-attachments/assets/c9f3049c-a16a-4dcf-b883-dccf9aa9388a" />
+
+
+
+ADMINISTRATEUR :
+<img width="1461" alt="Capture d’écran 2025-05-02 à 14 37 09" src="https://github.com/user-attachments/assets/ed152ff9-a2de-462c-af3c-58aafe79da1f" />
+<img width="1461" alt="Capture d’écran 2025-05-02 à 14 35 45" src="https://github.com/user-attachments/assets/6c0e6d7e-2610-4b06-934a-d8817c04cb96" />
+<img width="1461" alt="Capture d’écran 2025-05-02 à 14 36 02" src="https://github.com/user-attachments/assets/4d76b328-68ef-45b6-aecb-a347139d451c" />
+<img width="1461" alt="Capture d’écran 2025-05-02 à 14 36 44" src="https://github.com/user-attachments/assets/a537e318-a95f-4160-a0ca-7f24e10268fb" />
+<img width="1461" alt="Capture d’écran 2025-05-02 à 14 36 56" src="https://github.com/user-attachments/assets/a70160c5-fce3-44b7-855d-b2fb6ed376a8" />
+
+
 
 
